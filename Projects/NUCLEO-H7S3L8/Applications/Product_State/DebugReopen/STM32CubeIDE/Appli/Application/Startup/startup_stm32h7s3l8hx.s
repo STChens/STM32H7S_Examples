@@ -1,8 +1,8 @@
 /**
   ******************************************************************************
-  * @file      startup_stm32h7s7xx.s
+  * @file      startup_stm32h7s3xx.s
   * @author    MCD Application Team
-  * @brief     STM32H7S7xx Devices vector table for GCC toolchain.
+  * @brief     STM32H7S3xx Devices vector table for GCC toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,
@@ -117,7 +117,7 @@ Infinite_Loop:
 
 /******************************************************************************
 *
-* The STM32H7S7xx vector table. Note that the proper constructs
+* The STM32H7S3xx vector table. Note that the proper constructs
 * must be placed on this to ensure that it ends up at physical address
 * 0x0000.0000.
 *
@@ -182,7 +182,7 @@ g_pfnVectors:
   .word     PKA_IRQHandler                    /* PKA  */
   .word     HASH_IRQHandler                   /* HASH */
   .word     RNG_IRQHandler                    /* RNG  */
-  .word     ADC1_2_IRQHandler                 /* ADC1 & ADC2 */
+  .word     ADC1_2_IRQHandler                 /* ADC1 & ADC2      */
   .word     GPDMA1_Channel0_IRQHandler        /* GPDMA1 Channel 0 */
   .word     GPDMA1_Channel1_IRQHandler        /* GPDMA1 Channel 1 */
   .word     GPDMA1_Channel2_IRQHandler        /* GPDMA1 Channel 2 */
@@ -194,7 +194,7 @@ g_pfnVectors:
   .word     TIM1_BRK_IRQHandler               /* TIM1 Break  */
   .word     TIM1_UP_IRQHandler                /* TIM1 Update */
   .word     TIM1_TRG_COM_IRQHandler           /* TIM1 Trigger and Commutation */
-  .word     TIM1_CC_IRQHandler                /* TIM1 Capture Compare */
+  .word     TIM1_CC_IRQHandler                /* TIM1 Capture Compare         */
   .word     TIM2_IRQHandler                   /* TIM2 */
   .word     TIM3_IRQHandler                   /* TIM3 */
   .word     TIM4_IRQHandler                   /* TIM4 */
@@ -240,8 +240,8 @@ g_pfnVectors:
   .word     CORDIC_IRQHandler                 /* CORDIC */
   .word     GFXTIM_IRQHandler                 /* GFXTIM */
   .word     DCMIPP_IRQHandler                 /* DCMIPP */
-  .word     LTDC_IRQHandler                   /* LTDC   */
-  .word     LTDC_ER_IRQHandler                /* LTDC error  */
+  .word     0                                 /* Reserved */
+  .word     0                                 /* Reserved */
   .word     DMA2D_IRQHandler                  /* DMA2D  */
   .word     JPEG_IRQHandler                   /* JPEG   */
   .word     GFXMMU_IRQHandler                 /* GFXMMU */
@@ -293,9 +293,9 @@ g_pfnVectors:
   .word     HPDMA1_Channel13_IRQHandler       /* HPDMA1 Channel 13 */
   .word     HPDMA1_Channel14_IRQHandler       /* HPDMA1 Channel 14 */
   .word     HPDMA1_Channel15_IRQHandler       /* HPDMA1 Channel 15 */
-  .word     GPU2D_IRQHandler                  /* GPU2D */
-  .word     GPU2D_ER_IRQHandler               /* GPU2D error */
-  .word     ICACHE_IRQHandler                 /* ICACHE */
+  .word     0                                 /* Reserved */
+  .word     0                                 /* Reserved */
+  .word     0                                 /* Reserved */
   .word     FDCAN1_IT0_IRQHandler             /* FDCAN1 Interrupt 0 */
   .word     FDCAN1_IT1_IRQHandler             /* FDCAN1 Interrupt 1 */
   .word     FDCAN2_IT0_IRQHandler             /* FDCAN2 Interrupt 0 */
@@ -603,12 +603,6 @@ g_pfnVectors:
    .weak      DCMIPP_IRQHandler
    .thumb_set DCMIPP_IRQHandler,Default_Handler
 
-   .weak      LTDC_IRQHandler
-   .thumb_set LTDC_IRQHandler,Default_Handler
-
-   .weak      LTDC_ER_IRQHandler
-   .thumb_set LTDC_ER_IRQHandler,Default_Handler
-
    .weak      DMA2D_IRQHandler
    .thumb_set DMA2D_IRQHandler,Default_Handler
 
@@ -755,15 +749,6 @@ g_pfnVectors:
 
    .weak      HPDMA1_Channel15_IRQHandler
    .thumb_set HPDMA1_Channel15_IRQHandler,Default_Handler
-
-   .weak      GPU2D_IRQHandler
-   .thumb_set GPU2D_IRQHandler,Default_Handler
-
-   .weak      GPU2D_ER_IRQHandler
-   .thumb_set GPU2D_ER_IRQHandler,Default_Handler
-
-   .weak      ICACHE_IRQHandler
-   .thumb_set ICACHE_IRQHandler,Default_Handler
 
    .weak      FDCAN1_IT0_IRQHandler
    .thumb_set FDCAN1_IT0_IRQHandler,Default_Handler

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Appli</name>
+	<name>GPIO_IOToggle</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -18,9 +18,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>Appli.ioc</name>
+			<name>GPIO_IOToggle.ioc</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/Appli.ioc</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/GPIO_IOToggle.ioc</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
