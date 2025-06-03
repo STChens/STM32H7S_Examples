@@ -78,7 +78,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-          <state>STM32H7S3L8	ST STM32H7S3L8</state>
+                    <state>STM32H7S3L8	ST STM32H7S3L8</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -124,7 +124,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-          <state></state>
+                    <state>STM32H7S3L8	ST STM32H7S3L8</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -215,7 +215,7 @@
                 <option>
                     <name>CCDefines</name>
                     <state>USE_HAL_DRIVER</state>
-          <state>STM32H7S3xx</state>
+                    <state>STM32H7S3xx</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -337,7 +337,7 @@
                 <option>
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$/../../Appli/Inc</state>
-          <state>$PROJ_DIR$/../../../../../../../Drivers/BSP/STM32H7RSxx_Nucleo</state>
+                    <state>$PROJ_DIR$/../../../../../../../Drivers/BSP/STM32H7RSxx_Nucleo</state>
                     <state>$PROJ_DIR$/../../../../../../../Drivers/STM32H7RSxx_HAL_Driver/Inc</state>
                     <state>$PROJ_DIR$/../../../../../../../Drivers/STM32H7RSxx_HAL_Driver/Inc/Legacy</state>
                     <state>$PROJ_DIR$/../../../../../../../Drivers/CMSIS/Device/ST/STM32H7RSxx/Include</state>
@@ -754,7 +754,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$PROJ_DIR$\stm32h7rsxx_RAMxspi1_ROMxspi2.icf</state>
+                    <state>$PROJ_DIR$\stm32h7rsxx_ROMxspi2.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
@@ -1071,7 +1071,7 @@
         <group>
             <name>EWARM</name>
             <file>
-        <name>$PROJ_DIR$/../startup_stm32h7s3xx.s</name>
+                <name>$PROJ_DIR$\..\startup_stm32h7s3xx.s</name>
             </file>
         </group>
         <group>
@@ -1101,9 +1101,9 @@
         <group>
             <name>BSP</name>
             <group>
-        <name>STM32H7RSxx_Nucleo</name>
+                <name>STM32H7RSxx_Nucleo</name>
                 <file>
-          <name>$PROJ_DIR$/../../../../../../../Drivers/BSP/STM32H7RSxx_Nucleo/stm32h7rsxx_nucleo.c</name>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\..\Drivers\BSP\STM32H7RSxx_Nucleo\stm32h7rsxx_nucleo.c</name>
                 </file>
             </group>
         </group>

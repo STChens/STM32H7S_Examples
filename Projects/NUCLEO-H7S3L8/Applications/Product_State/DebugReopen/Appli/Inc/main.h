@@ -31,7 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stm32h7s78_discovery.h"
+#include "stm32h7rsxx_nucleo.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

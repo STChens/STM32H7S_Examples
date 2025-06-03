@@ -395,10 +395,6 @@ int main(void)
     HAL_GPIO_TogglePin(LD3_GPIO_PORT, LD3_PIN);
     /* Insert delay 100 ms */
     HAL_Delay(100);
-    HAL_GPIO_TogglePin(LD4_GPIO_PORT, LD4_PIN);
-    /* Insert delay 100 ms */
-    HAL_Delay(100);
-
   }
   /* USER CODE END 3 */
 }
@@ -471,46 +467,6 @@ static void MPU_Config(void)
   MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
   HAL_MPU_ConfigRegion(&MPU_InitStruct);
   index++;
-
-  /* Initialize the region corresponding to external RAM */
-#if defined ( __ICCARM__ )
-  extern uint32_t __region_EXTRAM_start__;
-  extern uint32_t __region_EXTRAM_end__;
-
-  address = (uint32_t)&__region_EXTRAM_start__;
-  size = (uint32_t)&__region_EXTRAM_end__ - (uint32_t)&__region_EXTRAM_start__ + 1;
-
-#elif defined (__CC_ARM) || defined(__ARMCC_VERSION)
-  extern uint32_t Image$$RW_EXTRAM$$Base;
-  extern uint32_t Image$$RW_EXTRAM$$ZI$$Length;
-  extern uint32_t Image$$RW_EXTRAM$$Length;
-
-  address = (uint32_t)&Image$$RW_EXTRAM$$Base;
-  size  = (uint32_t)&Image$$RW_EXTRAM$$Length + (uint32_t)&Image$$RW_EXTRAM$$ZI$$Length;
-#elif defined ( __GNUC__ )
-  extern uint32_t __EXTRAM_BEGIN;
-  extern uint32_t __EXTRAM_SIZE;
-  address = (uint32_t)&__EXTRAM_BEGIN;
-  size  = (uint32_t)&__EXTRAM_SIZE;
-#else
-#error "Compiler toolchain is unsupported"
-#endif
-
-  if (size != 0)
-  {
-    MPU_InitStruct.Enable = MPU_REGION_ENABLE;
-    MPU_InitStruct.Number = index;
-    MPU_InitStruct.SubRegionDisable = 0u;
-    MPU_InitStruct.TypeExtField = MPU_TEX_LEVEL1;
-    MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
-    MPU_InitStruct.DisableExec = MPU_INSTRUCTION_ACCESS_DISABLE;
-    MPU_InitStruct.IsShareable = MPU_ACCESS_SHAREABLE;
-    MPU_InitStruct.IsCacheable = MPU_ACCESS_CACHEABLE;
-    MPU_InitStruct.IsBufferable = MPU_ACCESS_BUFFERABLE;
-    MPU_AdjustRegionAddressSize(address, size, &MPU_InitStruct);
-    HAL_MPU_ConfigRegion(&MPU_InitStruct);
-    index++;
-  }
 
   /* Initialize the non cacheable region */
 #if defined ( __ICCARM__ )
