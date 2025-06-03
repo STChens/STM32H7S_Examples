@@ -5,7 +5,7 @@
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
-  <WorkspaceName></WorkspaceName>
+  <WorkspaceName>C:\Users\chens\STM32Cube\Repository\H7RS_V1.0.0\Projects\NUCLEO-H7S3L8\Applications\Product_State\DebugReopen\MDK-ARM\Project.uvmpw</WorkspaceName>
 
   <project>
     <PathAndName>.\Appli\Appli.uvprojx</PathAndName>
