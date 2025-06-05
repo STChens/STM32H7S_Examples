@@ -57,10 +57,11 @@ static void MPU_Config(void);
 static void open_debug(void);
 static void read_SBS_reg(void);
 static void GetProductState(void);
-static void read_obk(void);
 static void regression(void);
 static void SetProductState(uint32_t state);
 static void GetRSSStatus(void);
+static void IncreaseCurrentHDPLevel(void);
+static void GetCurrentHDPLevel(void);
 
 /* USER CODE END PFP */
 
@@ -166,11 +167,11 @@ static void GetProductState(void)
   uint32_t ps = RSSLIB_PFUNC->GetProductState();
   switch (ps)
   {
-    case 0x39: printf("\t : << OPEN >> \r\n"); break;
-    case 0x17: printf("\t : << PROVISIONING >> \r\n"); break;
-    case 0x72: printf("\t : << CLOSED >> \r\n"); break;
-    case 0x5C: printf("\t : << LOCKED >> \r\n"); break;
-    default: printf("\t UNKNOWN bad value!!\r\n"); break;
+    case 0x39: printf("Product state\t : << OPEN >> \r\n"); break;
+    case 0x17: printf("Product state\t : << PROVISIONING >> \r\n"); break;
+    case 0x72: printf("Product state\t : << CLOSED >> \r\n"); break;
+    case 0x5C: printf("Product state\t : << LOCKED >> \r\n"); break;
+    default: printf("Product state\t UNKNOWN bad value!!\r\n"); break;
   }
   
 //#else
@@ -184,7 +185,7 @@ static void GetProductState(void)
   HAL_FLASHEx_OBGetConfig(&flash_option_bytes);
   
   nvstate = flash_option_bytes.NVState & FLASH_NVSRP_NVSTATE;
-  printf("NVSTATE is %02x ",nvstate);
+  printf("NVSTATE [%02x] ",nvstate);
   
   switch (nvstate)
   {
@@ -193,19 +194,19 @@ static void GetProductState(void)
     default: printf("\t UNKNOWN bad value!!\r\n"); break;
   }
   
-  printf("ROT Config is %08x \r\n",flash_option_bytes.ROTConfig);
+  printf("ROT Config [%08x] \r\n",flash_option_bytes.ROTConfig);
   rotselect = flash_option_bytes.ROTConfig & FLASH_ROTSR_IROT_SELECT;
   dbgauth = flash_option_bytes.ROTConfig & FLASH_ROTSR_DBG_AUTH;
   provd = flash_option_bytes.ROTConfig & FLASH_ROTSRP_OEM_PROVD;
   
-  printf("ROT select is %08x ",rotselect);
+  printf("ROT select [%08x] ",rotselect);
   switch (rotselect)
   {
     case OB_IROT_SELECTION_ST: printf("\t : << ST >> \r\n"); break;
     case OB_IROT_SELECTION_OEM: printf("\t : << OEM >> \r\n"); break;
     default: printf("\t UNKNOWN bad value!!\r\n"); break;
   }
-  printf("DBG AUTH is %08x ",dbgauth);
+  printf("DBG AUTH [%08x] ",dbgauth);
   switch (dbgauth)
   {
     case OB_DBG_AUTH_LOCKED: printf("\t : << LOCKED >> \r\n"); break;
@@ -214,7 +215,7 @@ static void GetProductState(void)
     case OB_DBG_AUTH_PASSWORD: printf("\t : << DEFAULT >> \r\n"); break;
     default: printf("\t UNKNOWN bad value!!\r\n"); break;
   }
-  printf("PROVISION state is %08x ",provd);
+  printf("PROVISION state [%08x] ",provd);
   switch (provd)
   {
     case OB_OEM_PROVD_ENABLE: printf("\t : << PROVISIONED >> \r\n"); break;
@@ -224,6 +225,11 @@ static void GetProductState(void)
 #endif
 }
 
+/** 
+ * @brief Function to revert NVSTATE OB from CLOSE to OPEN
+ * @param none
+ * @return none
+ */
 static void regression(void)
 {
   FLASH_OBProgramInitTypeDef flash_option_bytes = {0};
@@ -232,30 +238,97 @@ static void regression(void)
   flash_option_bytes.OptionType = OPTIONBYTE_NV;  
   HAL_FLASHEx_OBGetConfig(&flash_option_bytes);
   
-  flash_option_bytes.NVState = OB_NVSTATE_OPEN;
-  printf("Setting NVSTATE to 0x%X ...\r\n", flash_option_bytes.NVState);
-
-   /* Unlock the Flash to enable the flash control register access */
-  HAL_FLASH_Unlock();
-
-  /* Unlock the Options Bytes */
-  HAL_FLASH_OB_Unlock();
-
-
-  printf("Program state ...\r\n");
-
-  ret = HAL_FLASHEx_OBProgram(&flash_option_bytes);
-  if (ret != HAL_OK)
+  if ( flash_option_bytes.NVState == OB_NVSTATE_CLOSE )
   {
-    printf("Error while setting OB Bank1 config state!\r\n");
-    Error_Handler();
+    flash_option_bytes.NVState = OB_NVSTATE_OPEN;
+    printf("Setting NVSTATE to 0x%X ...\r\n", flash_option_bytes.NVState);
+
+     /* Unlock the Flash to enable the flash control register access */
+    HAL_FLASH_Unlock();
+
+    /* Unlock the Options Bytes */
+    HAL_FLASH_OB_Unlock();
+
+    printf("Program state ...\r\n");
+
+    ret = HAL_FLASHEx_OBProgram(&flash_option_bytes);
+    if (ret != HAL_OK)
+    {
+      printf("Error while setting OB Bank1 config state!\r\n");
+      Error_Handler();
+    }
+
+    printf("After OB programming: system reset !\r\n");  
+    HAL_FLASH_OB_Lock();
+    HAL_FLASH_Lock();
   }
-
-  printf("After OB programming: system reset !\r\n");  
-  HAL_FLASH_OB_Lock();
-  HAL_FLASH_Lock();
-
+  else
+  {
+    printf("Current NVSTATE is NOT << CLOSE >>. Will only do regression in CLOSE state\r\n");
+  }
 }
+
+#define HDPL_VALUE_2_LEVEL(hdpl, level) \
+    if ( hdpl == 0xB4 ) { \
+      level = 0;        \
+    } else if ( hdpl == 0x51 ) {   \
+      level = 1;        \
+    } else if ( hdpl == 0x8A ) { \
+      level = 2;        \
+    } else  { \
+      level = 3; \
+    }
+
+/** 
+ * @brief Function to get current HDP level
+ * @param none
+ * @return none
+ */
+static void GetCurrentHDPLevel(void)
+{
+  __HAL_RCC_SBS_CLK_ENABLE();
+  uint8_t HDPL = (SBS->HDPLSR)&0xFF;
+  int level = 0;
+  
+  printf("Current HDPL: ");
+  HDPL_VALUE_2_LEVEL(HDPL, level);
+  printf("<< HDPL-%d >>\r\n", level);
+  
+  __HAL_RCC_SBS_CLK_DISABLE();
+}
+
+/** 
+ * @brief Function to increase HDP level
+ * @param none
+ * @return none
+ */
+static void IncreaseCurrentHDPLevel(void)
+{
+  __HAL_RCC_SBS_CLK_ENABLE();
+  uint8_t HDPL = (SBS->HDPLSR)&0xFF;
+  int level = 0;
+  
+  printf("HDPL before increasing: ");
+  HDPL_VALUE_2_LEVEL(HDPL, level);
+  printf("<< HDPL-%d >>\r\n", level);
+  
+  if ( level == 3 )
+  {
+    printf("Currently already in highest level, will not increase\r\n");
+  }
+  else
+  {
+    printf("Increase HDPL by 1\r\n");
+    SBS->HDPLCR = 0x6A;
+    printf("HDPL after increasing: ");
+    HDPL = (SBS->HDPLSR)&0xFF;
+    HDPL_VALUE_2_LEVEL(HDPL, level);
+    printf("<< HDPL-%d >>\r\n", level);      
+  }
+  
+  __HAL_RCC_SBS_CLK_DISABLE();
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -316,15 +389,14 @@ int main(void)
       printf("\r\n ============= Test menu ============== \r\n");
       printf("Open debug                 ---------- d\n");
       printf("Show sbs register value    ---------- s\n");
-      printf("Prov default password obk  ---------- p\n");
+      //printf("Prov default password obk  ---------- p\n");
       printf("Get RSS status             ---------- a\n");
       printf("Regression                 ---------- r\n");
       printf("Get current product state  ---------- 0\n");      
       printf("Set PS to Provisioning     ---------- 1\n");      
       printf("Set PS to Closed           ---------- 2\n");
       printf("Get current HDP level      ---------- 3\n");
-      printf("Set HDPL to level 2        ---------- 4\n");
-      printf("Set HDPL to level 3        ---------- 5\n");
+      printf("Increase HDP level         ---------- 4\n");
       printf("Exit                       ---------- x\n");
       while (HAL_UART_Receive(&hcom_uart[COM1], &response, 1, 1000) == HAL_TIMEOUT);
       printf("Your input is : %c\r\n", response);
@@ -346,6 +418,14 @@ int main(void)
         printf("===> Call RSS API to set product state to closed\r\n");
         SetProductState(PRODUCT_STATE_CLOSED);
         break;
+      case '3':
+        printf("===> Get current HDP level\r\n");
+        GetCurrentHDPLevel();
+        break;
+      case '4':
+        printf("===> Increase HDP level\r\n");
+        IncreaseCurrentHDPLevel();
+        break;
       case 'd':
         printf("===> Recovery => open debug!\r\n");
         open_debug();
@@ -356,13 +436,6 @@ int main(void)
       case 'r':
         printf("===> Launch regression NOT SUPPORTED!\r\n");        
         regression();
-        break;
-//      case 'b':
-//        printf("===> Read OBK HDPL1 128bit !\r\n"); 
-//        read_obk();
-//        break;  
-      case 'i':
-        //back_to_privisioning();
         break;
       case 'p':
         //provision_default_password_obk();

@@ -78,7 +78,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>STM32H7S3L8	ST STM32H7S3L8</state>
+                    <state>STM32H7S38-NUCLEO	ST STM32H7S38-NUCLEO</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -124,7 +124,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>STM32H7S3L8	ST STM32H7S3L8</state>
+                    <state>STM32H7S38-NUCLEO	ST STM32H7S38-NUCLEO</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -754,7 +754,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>$PROJ_DIR$\stm32h7rsxx_ROMxspi2.icf</state>
+                    <state>$PROJ_DIR$\stm32h7rsxx_ROM.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
