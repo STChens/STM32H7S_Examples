@@ -81,16 +81,19 @@ static void read_SBS_reg(void)
 
 static void open_debug(void)
 {
-  __HAL_RCC_SBS_CLK_ENABLE();
 
   printf("Test SBS DBG \r\n");
   printf("==> Read SBS DBG CR register [%08X]\r\n", SBS->DBGCR);
   printf("==> Enable AP and DBG from SBS\r\n");
+
+  __HAL_RCC_SBS_CLK_ENABLE();
+
   uint32_t dbgcr = SBS->DBGCR;
   dbgcr = dbgcr & 0xFF000000 | 0x51b4b4;
   SBS->DBGCR = dbgcr;
   SBS->DBGLOCKR = 0x0000006a;
-  DBGMCU->CR |= 0x00010000; /* set bit16 as 1 to reset SBS under power reset instead of system reset*/
+  /* set bit16 as 1 to reset SBS under power reset instead of system reset*/
+  DBGMCU->CR |= 0x00010000; 
   read_SBS_reg();
   while(1){}
 }
@@ -434,7 +437,7 @@ int main(void)
         read_SBS_reg();
         break;
       case 'r':
-        printf("===> Launch regression NOT SUPPORTED!\r\n");        
+        printf("===> Launch regression!\r\n");        
         regression();
         break;
       case 'p':
