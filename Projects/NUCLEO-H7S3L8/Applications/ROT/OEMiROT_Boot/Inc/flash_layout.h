@@ -37,7 +37,7 @@ extern "C" {
 #define NO_LOAD_AND_RUN      (0)                          /*!< OEMiROT_Boot uses "Execute In Place" */
 #define LOAD_AND_RUN_INT_RAM (1)                          /*!< OEMiROT_Boot uses "Load & Run" with internal RAM memory */
 #define LOAD_AND_RUN_EXT_RAM (2)                          /*!< OEMiROT_Boot uses "Load & Run" with external RAM memory */
-#define OEMIROT_LOAD_AND_RUN LOAD_AND_RUN_EXT_RAM /*!< Flag configuring the feature "Load and Run" */
+#define OEMIROT_LOAD_AND_RUN NO_LOAD_AND_RUN /*!< Flag configuring the feature "Load and Run" */
 
 #define MCUBOOT_OVERWRITE_ONLY     /* Defined: the FW installation uses overwrite method.
                                       UnDefined: The FW installation uses swap mode. */

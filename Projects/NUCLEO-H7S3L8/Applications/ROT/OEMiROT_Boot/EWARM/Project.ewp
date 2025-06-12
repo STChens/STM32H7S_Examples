@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>STM32H7S78-DK_OEMiROT_Boot</name>
+        <name>Nucleo-H7S3L8_OEMiROT_Boot</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -16,7 +16,7 @@
                 <debug>1</debug>
                 <option>
                     <name>BrowseInfoPath</name>
-                    <state>STM32H7S78-DK_OEMiROT_Boot\BrowseInfo</state>
+                    <state>Nucleo-H7S3L8_OEMiROT_Boot\BrowseInfo</state>
                 </option>
                 <option>
                     <name>TrustZone</name>
@@ -24,15 +24,15 @@
                 </option>
                 <option>
                     <name>ExePath</name>
-                    <state>STM32H7S78-DK\Exe</state>
+                    <state>Nucleo-H7S3L8\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>STM32H7S78-DK\Obj</state>
+                    <state>Nucleo-H7S3L8\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>STM32H7S78-DK\List</state>
+                    <state>Nucleo-H7S3L8\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -78,7 +78,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>STM32H7S7L8	ST STM32H7S7L8</state>
+                    <state>STM32H7S38-NUCLEO	ST STM32H7S38-NUCLEO</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -124,7 +124,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>STM32H7S7L8	ST STM32H7S7L8</state>
+                    <state>STM32H7S38-NUCLEO	ST STM32H7S38-NUCLEO</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -201,7 +201,7 @@
                 </option>
                 <option>
                     <name>BuildFilesPath</name>
-                    <state>STM32H7S78-DK_OEMiROT_Boot</state>
+                    <state>Nucleo-H7S3L8_OEMiROT_Boot</state>
                 </option>
             </data>
         </settings>
@@ -214,7 +214,7 @@
                 <debug>1</debug>
                 <option>
                     <name>CCDefines</name>
-                    <state>STM32H7S7xx</state>
+                    <state>STM32H7S3xx</state>
                     <state>USE_HAL_DRIVER</state>
                     <state>NDEBUG</state>
                     <state>MCUBOOT_TARGET_CONFIG=&lt;flash_layout.h&gt;</state>

@@ -2,7 +2,7 @@
 <project>
   <fileVersion>3</fileVersion>
   <configuration>
-    <name>STM32H7S78-DK_OEMiROT_Boot</name>
+    <name>Nucleo-H7S3L8_OEMiROT_Boot</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
