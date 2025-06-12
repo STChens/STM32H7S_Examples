@@ -1,6 +1,6 @@
 # STM32H7S Examples
 This project provides some examples of using STM32H7S
-The example is made basing on STM32H7RS CubeFW package v1.0.0
+The example is made basing on STM32H7RS CubeFW package v1.1.0
 
 ## HW platform
 Nucleo-H7S3L8
