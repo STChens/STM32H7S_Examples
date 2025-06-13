@@ -13,7 +13,7 @@ set stm32ExtLoaderFlash=-elbl %stm32tool_path%/ExternalLoader/MX25UW25645G_NUCLE
 set stm32ExtLoaderFlashOpen=-el %stm32tool_path%/ExternalLoader/MX25UW25645G_NUCLEO-H7S3L8-XSPIM1.stldr
 
 :: Configure Virtual Com Port
-set com_port=COM19
+set com_port=COM31
 
 :: ==============================================================================
 ::                            STiROT bootpath

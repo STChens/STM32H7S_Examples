@@ -109,7 +109,7 @@ volatile uint8_t boot_conf_flag[FLAG_SIZE];
 #define ICACHE_MONITOR
 */
 #if defined(ICACHE_MONITOR)
-#define ICACHE_MONITOR_PRINT() printf("icache monitor - Hit: %x, Miss: %x\r\n", \
+#define ICACHE_MONITOR_PRINT() BOOT_LOG_WRN("icache monitor - Hit: %x, Miss: %x\r\n", \
                                       HAL_ICACHE_Monitor_GetHitValue(), HAL_ICACHE_Monitor_GetMissValue());
 #else
 #define ICACHE_MONITOR_PRINT()
@@ -137,6 +137,83 @@ static int boot_compute_run_img_hash(uint32_t FlowStep, uint32_t FlowCtrl);
 /**
   * @}
   */
+
+/* Define USER_BUTTON macro, then platform init will deetect user button press
+ * to show a small menu for debug open, regression
+ */
+#define USER_BUTTON 
+
+#ifdef USER_BUTTON
+#define BUTTON_PORT                       GPIOC
+#define BUTTON_CLK_ENABLE                 __HAL_RCC_GPIOC_CLK_ENABLE()
+#define BUTTON_PIN                        GPIO_PIN_13
+
+static void open_debug(void);
+static void read_SBS_reg(void);
+static void regression(void);
+
+static void regression(void)
+{
+  FLASH_OBProgramInitTypeDef flash_option_bytes = {0};
+  HAL_StatusTypeDef ret = HAL_ERROR;
+  
+  flash_option_bytes.OptionType = OPTIONBYTE_NV;  
+  HAL_FLASHEx_OBGetConfig(&flash_option_bytes);
+  
+  flash_option_bytes.NVState = OB_NVSTATE_OPEN;
+  BOOT_LOG_WRN("Setting NVSTATE to 0x%x ...", flash_option_bytes.NVState);
+
+   /* Unlock the Flash to enable the flash control register access */
+  HAL_FLASH_Unlock();
+
+  /* Unlock the Options Bytes */
+  HAL_FLASH_OB_Unlock();
+
+
+  BOOT_LOG_WRN("Program nvstate ...");
+
+  ret = HAL_FLASHEx_OBProgram(&flash_option_bytes);
+  if (ret != HAL_OK)
+  {
+    BOOT_LOG_ERR("Error while setting OB Bank1 config state!");
+    Error_Handler();
+  }
+
+  BOOT_LOG_WRN("After OB programming: system reset !");  
+  HAL_FLASH_OB_Lock();
+  HAL_FLASH_Lock();
+
+}
+
+static void read_SBS_reg(void)
+{
+  __HAL_RCC_SBS_CLK_ENABLE();
+  BOOT_LOG_INF("READ SBS HDPL and DBG registers:");
+  BOOT_LOG_INF("SBS DBGCR [0x%x] ", SBS->DBGCR);
+  BOOT_LOG_INF("SBS DBGLOCKR [0x%x] ", SBS->DBGLOCKR);
+  BOOT_LOG_INF("SBS HDPLCR [0x%x] ", SBS->HDPLCR);
+  BOOT_LOG_INF("SBS HDPLSR [0x%x] ", SBS->HDPLSR);
+  BOOT_LOG_INF("DBGMCU CR [0x%x] ", DBGMCU->CR);
+  BOOT_LOG_INF("DBGMCU SR [0x%x] ", DBGMCU->SR);
+}
+
+static void open_debug(void)
+{
+  __HAL_RCC_SBS_CLK_ENABLE();
+
+  BOOT_LOG_INF("Test SBS DBG ");
+  BOOT_LOG_INF("==> Read SBS DBG CR register [%x]", SBS->DBGCR);
+  BOOT_LOG_INF("==> Enable AP and DBG from SBS");
+  uint32_t dbgcr = SBS->DBGCR;
+  dbgcr = dbgcr & 0xFF000000 | 0x51b4b4;
+  SBS->DBGCR = dbgcr;
+  SBS->DBGLOCKR = 0x0000006a;
+  DBGMCU->CR |= 0x00010000; /* set bit16 as 1 to reset SBS under power reset instead of system reset*/
+  read_SBS_reg();
+  while(1){}
+}
+#endif /* USER_BUTTON */
+
 #if defined(MCUBOOT_EXT_LOADER)
 /**
   * @brief This function manage the jump to boot loader application.
@@ -798,7 +875,56 @@ static int boot_compute_run_img_hash(uint32_t FlowStep, uint32_t FlowCtrl)
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+#ifdef USER_BUTTON
+  GPIO_InitTypeDef GPIO_Init;
+#endif /* USER_BUTTON */
 /* Private function prototypes -----------------------------------------------*/
+
+  
+#ifdef USER_BUTTON
+  /* Initialize GPIO for user button and check for user button press */
+static void user_button_test_menu(void)
+{
+  /* configure Button pin */
+  BUTTON_CLK_ENABLE;
+  GPIO_Init.Pin       = BUTTON_PIN;
+  GPIO_Init.Mode      = GPIO_MODE_INPUT;
+  GPIO_Init.Speed     = GPIO_SPEED_FREQ_HIGH;
+  GPIO_Init.Pull      = GPIO_PULLUP;
+  GPIO_Init.Alternate = 0;
+  
+  BUTTON_CLK_ENABLE;
+  
+  HAL_GPIO_Init(BUTTON_PORT, &GPIO_Init);
+  /* read pin value */
+  if (HAL_GPIO_ReadPin(BUTTON_PORT, BUTTON_PIN) == GPIO_PIN_RESET)
+  {
+    extern UART_HandleTypeDef uart_device;
+
+    // Check UART
+    uint8_t response;
+    BOOT_LOG_INF("====================");
+    BOOT_LOG_INF("Debug  --- d");
+    BOOT_LOG_INF("Reg    --- r");
+    BOOT_LOG_INF("other key to continue...");
+    BOOT_LOG_INF("====================");
+    while (HAL_UART_Receive(&uart_device, &response, 1, 1000) == HAL_TIMEOUT);
+    switch (response)
+    {
+    case 'd':
+      BOOT_LOG_INF("Recovery => open debug!");
+      open_debug();
+      break;
+    case 'r':
+      BOOT_LOG_INF("Launch regression");
+      regression();
+      break;
+    default :
+      break;
+    }
+  }
+}
+#endif /* USER_BUTTON */
 
 /**
   * @brief  Platform init
@@ -825,7 +951,13 @@ int32_t boot_platform_init(void)
   stdio_init();
 #endif /*  OEMIROT_DEV_MODE */
 
-
+#ifdef USER_BUTTON
+  /* Check user button and display test menu if user button pressed 
+   * Call this function here to make sure it can be reached
+   */
+  user_button_test_menu();
+#endif /* USER_BUTTON */
+  
   /* Enable I-Cache */
   SCB_EnableICache();
 
@@ -962,6 +1094,12 @@ int32_t boot_platform_init(void)
 #endif /* not OEMIROT_MPU_PROTECTION */
 #endif /* not MCUBOOT_OVERWRITE_ONLY */
 
+#ifdef USER_BUTTON
+  /* Check user button and display test menu if user button pressed 
+   * Call this function here to make sure it can be reached
+   */
+  user_button_test_menu();
+#endif /* USER_BUTTON */  
   return 0;
 }
 
@@ -980,6 +1118,7 @@ __attribute__((section(".BL2_Error_Code")))
 #endif /* __ICCARM__ */
 void Error_Handler(void)
 {
+  open_debug();
   while (1);
 }
 #else /* OEMIROT_ERROR_HANDLER_STOP_EXEC */
@@ -992,6 +1131,7 @@ __attribute__((section(".BL2_Error_Code")))
 void Error_Handler(void)
 #endif /* __ICCARM__ */
 {
+  open_debug();
   /* It is customizeable */
   NVIC_SystemReset();
 #if !defined(__ICCARM__)
@@ -1011,7 +1151,7 @@ void Error_Handler(void)
 void __aeabi_assert(const char *expr, const char *file, int line)
 {
 #ifdef OEMIROT_DEV_MODE
-  printf("assertion \" %s \" failed: file %s %d\n", expr, file, line);
+  BOOT_LOG_WRN("assertion \" %s \" failed: file %s %d\n", expr, file, line);
 #endif /*  OEMIROT_DEV_MODE  */
   Error_Handler();
 }
@@ -1028,7 +1168,7 @@ void __aeabi_assert(const char *expr, const char *file, int line)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     ex: BOOT_LOG_WRN("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
   Error_Handler();
 }

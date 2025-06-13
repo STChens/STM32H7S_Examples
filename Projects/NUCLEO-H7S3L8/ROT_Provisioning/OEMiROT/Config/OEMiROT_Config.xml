@@ -5,7 +5,7 @@
 		<Title>OEMiROT configuration</Title>
 		<MCU>STM32H7S78</MCU>
 		<ObDestAddress>0x00000108</ObDestAddress>
-		<DoEncryption>0</DoEncryption>
+		<DoEncryption>1</DoEncryption>
 		<GlobalAlign>32</GlobalAlign>
 		<FlashStart>0x24000000</FlashStart>
 		<FlashSize>0xA0000000</FlashSize>

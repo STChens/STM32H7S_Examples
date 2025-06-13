@@ -97,7 +97,7 @@ static ARM_USART_CAPABILITIES USART_GetCapabilities(void)
 #define COM_TX_GPIO_CLK_ENABLE()               __HAL_RCC_GPIOD_CLK_ENABLE()
 #define COM_RX_GPIO_CLK_ENABLE()               __HAL_RCC_GPIOD_CLK_ENABLE()
 
-static UART_HandleTypeDef  uart_device;
+/*static*/ UART_HandleTypeDef  uart_device;
 static int32_t USART0_Initialize(ARM_USART_SignalEvent_t cb_event)
 {
 
