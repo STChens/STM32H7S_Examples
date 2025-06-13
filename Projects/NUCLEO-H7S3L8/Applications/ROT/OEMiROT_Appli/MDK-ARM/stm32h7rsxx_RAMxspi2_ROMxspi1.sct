@@ -6,7 +6,7 @@
 
 #define CODE_OFFSET       0x0        /* This define is updated automatically from OEMiROT_BOOT project */
 #define CODE_SIZE         0x200000   /* This define is updated automatically from OEMiROT_BOOT project */
-#define PARTITION_START   0x70000000 /* This define is updated automatically from OEMiROT_BOOT project */
+#define PARTITION_START   0x90000000 /* This define is updated automatically from OEMiROT_BOOT project */
 #define IMAGE_HEADER_SIZE 0x400      /* mcuboot header size */
 
 /*-Memory Regions-*/
