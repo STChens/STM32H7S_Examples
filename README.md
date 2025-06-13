@@ -30,3 +30,7 @@ Details about the content of this release are available in the release note [her
 ## Troubleshooting
 
 Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) guide.
+
+## OEM-iROT for Nucleo-H7S3L8 board
+OEMiROT_BOOT and OEMiROT_Appli folders includes the OEMiROT example for Nucleo-H7S3L8 board. 
+The projects are modified basing on the OEMiROT example for STM32H7S8-DK board.
