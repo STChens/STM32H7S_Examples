@@ -42,8 +42,8 @@ wrps6=0
 wrps7=0
 wrps=$((($wrps0<<0)|($wrps1<<1)|($wrps2<<2)|($wrps3<<3)|($wrps4<<4)|($wrps5<<5)|($wrps6<<6)|($wrps7<<7)))
 bootaddress=0x8000000
-hdp_start=1
-hdp_end=0
+hdp_start=0x0
+hdp_end=0xff
 hdps=$((($hdp_start<<0)|($hdp_end<<16)))
 app_image_number=1
 

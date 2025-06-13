@@ -37,7 +37,7 @@ ENTRY(Reset_Handler)
 
 CODE_OFFSET = 0x0;               /* This define is updated automatically by OEMiROT_Boot postbuild */
 CODE_SIZE = 0x200000;            /* This define is updated automatically by OEMiROT_Boot postbuild */
-PARTITION_START = 0x70000000;    /* This define is updated automatically by OEMiROT_Boot postbuild */
+PARTITION_START = 0x90000000;    /* This define is updated automatically by OEMiROT_Boot postbuild */
 IMAGE_HEADER_SIZE = 0x400;       /* mcuboot header size */
 CONF_FLAG_START = 0x30007FA0;
 CONF_FLAG_SIZE = 0x20;

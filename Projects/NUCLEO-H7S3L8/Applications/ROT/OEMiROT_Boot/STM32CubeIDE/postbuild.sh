@@ -64,10 +64,10 @@ oemurot_code_address="Firmware installation area address (in external flash)"
 oemurot_download_code_address="Firmware download area address (in external flash)"
 stirot_config_xml="$provisioning_dir/$bootpath/Config/STiROT_Config.xml"
 # Check the configuration of the application: Applications or Templates
-if [ -f "$appli_dir/STM32CubeIDE/STM32H7S7L8HXH_FLASH.ld" ]; then
-    ld_file="$appli_dir/STM32CubeIDE/STM32H7S7L8HXH_FLASH.ld"
-elif [ -f "$appli_dir/../STM32CubeIDE/Appli/STM32H7S7L8HXH_FLASH.ld" ]; then
-    ld_file="$appli_dir/../STM32CubeIDE/Appli/STM32H7S7L8HXH_FLASH.ld"
+if [ -f "$appli_dir/STM32CubeIDE/STM32H7S3L8HX_FLASH.ld" ]; then
+    ld_file="$appli_dir/STM32CubeIDE/STM32H7S3L8HX_FLASH.ld"
+elif [ -f "$appli_dir/../STM32CubeIDE/Appli/STM32H7S3L8HX_FLASH.ld" ]; then
+    ld_file="$appli_dir/../STM32CubeIDE/Appli/STM32H7S3L8HX_FLASH.ld"
 else
     echo No valid ld file found
     error
@@ -230,7 +230,7 @@ fi
 if [ ! -d "$project_dir/../Binary" ]; then
   mkdir "$project_dir/../Binary/"
 fi
-cp -a "$project_dir/$config/STM32H7S78-DK_OEMiROT_Boot.bin" "$project_dir/../Binary/OEMiROT_Boot.bin" >> "$current_log_file"
+cp -a "$project_dir/$config/Nucleo-H7S3L8_OEMiROT_Boot.bin" "$project_dir/../Binary/OEMiROT_Boot.bin" >> "$current_log_file"
 if [ $? != 0 ]; then error; fi
 
 if [ "$oemurot_enable" == "1" ]; then
